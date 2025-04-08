@@ -10,13 +10,37 @@ default rebac_roles := []
 
 default cache_rebuild := false
 
-rebac_roles_result := result {
-  __rebac_data := {
-  	"role_assignments": data.role_assignments,
-  	"relationships": data.relationships,
-  	"resource_types": data.resource_types,
+
+_rebac_data := result {
+  use_factdb
+  result := {
+    "role_assignments": input.context.data.role_assignments,
+    "relationships": input.context.data.relationships,
+    "resource_types": data.resource_types,
   }
-  result := permit_rebac_roles(__rebac_data, input)
+} else := result {
+  result := {
+    "role_assignments": data.role_assignments,
+    "relationships": data.relationships,
+    "resource_types": data.resource_types,
+  }
+}
+
+cache_rebuild {
+  not use_factdb
+	permit_rebac.update_cache(_rebac_data)
+}
+
+rebac_roles_result := result {
+  use_factdb
+  _rebac_input := {
+    "user": input.user,
+    "action": input.action,
+    "resource": input.resource,
+  }
+  result := permit_rebac_roles(_rebac_data, _rebac_input)
+} else := result {
+  result := permit_rebac.roles(input)
 }
 
 
