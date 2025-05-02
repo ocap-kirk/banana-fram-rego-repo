@@ -68,3 +68,12 @@ debug_info := {
 
 # Map all inherited attributes to resource attributes
 custom_resource_attributes := get_all_attributes(input.resource.type, input.resource.key)
+
+# Custom allow rule for Banana#eater with specific grandparent attribute
+allow {
+    # Check if user has the Banana#eater role
+    rebac.has_role(input.user, "Banana#eater", input.resource.type, input.resource.key)
+    
+    # Check if grandParent attribute exists and equals "valueXX" in either direct or inherited attributes
+    attributes.resource.grandParent == "valueXX"
+}
