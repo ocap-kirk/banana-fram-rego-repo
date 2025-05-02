@@ -82,7 +82,5 @@ debug_info := {
     "parent_farm_attrs": get_all_attributes("Farm", "ManzanoFarm")
 }
 
-# Map inherited location to resource attributes
-custom_resource_attributes := {
-    "location": get_all_attributes(input.resource.type, input.resource.key).location
-}
+# Map all inherited attributes to resource attributes
+custom_resource_attributes := get_all_attributes(input.resource.type, input.resource.key)
