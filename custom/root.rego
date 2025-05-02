@@ -82,15 +82,7 @@ debug_info := {
     "parent_farm_attrs": get_all_attributes("Farm", "ManzanoFarm")
 }
 
-# Allow smushing bananas only if parent or grandparent is in the US
-allow {
-    # Check if the action is "smush" and the resource is a banana
-    input.action == "smush"
-    input.resource.type == "Banana"
-    
-    # Get all attributes including inherited ones
-    all_attrs := get_all_attributes(input.resource.type, input.resource.key)
-    
-    # Check if location is US either directly or through inheritance
-    all_attrs.location == "US"
+# Map inherited location to resource attributes
+custom_resource_attributes := {
+    "location": get_all_attributes(input.resource.type, input.resource.key).location
 }
