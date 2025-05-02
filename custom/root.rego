@@ -94,6 +94,3 @@ allow {
     # Check if location is US either directly or through inheritance
     all_attrs.location == "US"
 }
-
-# You can find the official Rego tutorial at:
-# https://www.openpolicyagent.org/docs/latest/policy-language/
