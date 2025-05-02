@@ -2,6 +2,7 @@ package permit.custom
 
 import data.permit.utils.rebac
 import data.permit.generated.abac.utils.attributes
+import future.keywords.in
 
 default allow := false
 
