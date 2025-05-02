@@ -49,22 +49,15 @@ get_all_attributes(resource_type, resource_key) := all_attrs {
     # Get parent resources
     parents := get_parent_resources(resource_type, resource_key)
     
-    # Get attributes from all parents in the hierarchy
-    parent_attrs := object.union_n([
-        # Get direct parent attributes
-        get_resource_attributes(parent.type, parent.key) |
+    # Recursively get attributes from all ancestors
+    ancestor_attrs := object.union_n([
+        # Get attributes from each parent and their ancestors
+        get_all_attributes(parent.type, parent.key) |
         parent := parents[_]
-    ])
-    
-    # Get grandparent attributes (if any)
-    grandparent_attrs := object.union_n([
-        get_resource_attributes(grandparent.type, grandparent.key) |
-        parent := parents[_]
-        grandparent := get_parent_resources(parent.type, parent.key)[_]
     ])
     
     # Merge all attributes, with child attributes taking precedence
-    all_attrs := object.union(object.union(own_attrs, parent_attrs), grandparent_attrs)
+    all_attrs := object.union(own_attrs, ancestor_attrs)
 } else := {} {
     true
 }
