@@ -7,8 +7,8 @@ import future.keywords.in
 # Get parent resources using relationships data
 get_parent_resources(resource_type, resource_key) := parents {
     # Get parent relationships from the relationships data
-    resource_id := sprintf("%s:%s", [resource_type, resource_key])
-    parent_rels := data.relationships[resource_id]["relation:parent"]
+    resource_parts := rebac.split_resource_to_parts(sprintf("%s:%s", [resource_type, resource_key]))
+    parent_rels := data.relationships[resource_parts.fully_qualified_key]["relation:parent"]
     parents := {{"type": type, "key": key} |
         some type, keys in parent_rels
         key := keys[_]
@@ -19,8 +19,8 @@ get_parent_resources(resource_type, resource_key) := parents {
 
 # Get attributes for a specific resource
 get_resource_attributes(resource_type, resource_key) := attrs {
-    resource_id := sprintf("%s:%s", [resource_type, resource_key])
-    attrs := data.resource_instances[resource_id].attributes
+    resource_parts := rebac.split_resource_to_parts(sprintf("%s:%s", [resource_type, resource_key]))
+    attrs := data.resource_instances[resource_parts.fully_qualified_key].attributes
 } else := {} {
     true
 }
@@ -58,7 +58,7 @@ debug_info := {
     "resource_parents": get_parent_resources(input.resource.type, input.resource.key),
     "resource_attrs": get_resource_attributes(input.resource.type, input.resource.key),
     "all_attrs": get_all_attributes(input.resource.type, input.resource.key),
-    "relationships": data.relationships[sprintf("%s:%s", [input.resource.type, input.resource.key])],
+    "relationships": data.relationships[rebac.split_resource_to_parts(sprintf("%s:%s", [input.resource.type, input.resource.key])).fully_qualified_key],
     "farm_attrs": get_resource_attributes("Farm", "ManzanoFarm"),
     "tree_attrs": get_resource_attributes("Tree", "tree_001"),
     "banana_attrs": get_resource_attributes("Banana", "ba_001"),
@@ -68,12 +68,3 @@ debug_info := {
 
 # Map all inherited attributes to resource attributes
 custom_resource_attributes := get_all_attributes(input.resource.type, input.resource.key)
-
-# Custom allow rule for Banana#eater with specific grandparent attribute
-allow {
-    # Check if user has the Banana#eater role
-    rebac.has_role(input.user, "Banana#eater", input.resource.type, input.resource.key)
-    
-    # Check if grandParent attribute exists and equals "valueXX" in either direct or inherited attributes
-    attributes.resource.grandParent == "valueXX"
-}
