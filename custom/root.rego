@@ -41,33 +41,29 @@ get_resource_attributes(resource_type, resource_key) := attrs {
     true
 }
 
-# Get all attributes including inherited ones
-get_all_attributes(resource_type, resource_key) := all_attrs {
+# Helper function to get attributes with a specific depth
+get_attributes_at_depth(resource_type, resource_key, depth) := attrs {
+    # Get the resource's own attributes
+    attrs := get_resource_attributes(resource_type, resource_key)
+} else := attrs {
     # Get the resource's own attributes
     own_attrs := get_resource_attributes(resource_type, resource_key)
     
-    # Get parent resources and their attributes
+    # Get parent resources
     parents := get_parent_resources(resource_type, resource_key)
     
-    # If there are no parents, just return own attributes
-    count(parents) == 0
-    all_attrs := own_attrs
-} else := all_attrs {
-    # Get the resource's own attributes
-    own_attrs := get_resource_attributes(resource_type, resource_key)
-    
-    # Get parent resources and their attributes
-    parents := get_parent_resources(resource_type, resource_key)
-    
-    # Get parent attributes recursively and merge them
+    # Get parent attributes at the next depth level
     parent_attrs := object.union_n([
-        get_all_attributes(parent.type, parent.key) |
+        get_attributes_at_depth(parent.type, parent.key, depth - 1) |
         parent := parents[_]
     ])
     
     # Merge all attributes, with child attributes taking precedence
-    all_attrs := object.union(own_attrs, parent_attrs)
+    attrs := object.union(own_attrs, parent_attrs)
 }
+
+# Get all attributes including inherited ones (with a maximum depth of 10 to prevent infinite recursion)
+get_all_attributes(resource_type, resource_key) := get_attributes_at_depth(resource_type, resource_key, 10)
 
 # Debug information
 debug_info := {
