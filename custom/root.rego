@@ -82,10 +82,10 @@ debug_info := {
     "parent_farm_attrs": get_all_attributes("Farm", "ManzanoFarm")
 }
 
-# Allow eating bananas only if they are in the US (either directly or through inheritance)
+# Allow smushing bananas only if parent or grandparent is in the US
 allow {
-    # Check if the action is "eat" and the resource is a banana
-    input.action == "eat"
+    # Check if the action is "smush" and the resource is a banana
+    input.action == "smush"
     input.resource.type == "Banana"
     
     # Get all attributes including inherited ones
