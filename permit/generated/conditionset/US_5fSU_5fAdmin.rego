@@ -7,6 +7,6 @@ import data.permit.generated.abac.utils.attributes
 default userset_US_5fSU_5fAdmin = false
 
 userset_US_5fSU_5fAdmin {
-	"su" in attributes.user.roles
+	"SU" in attributes.user.roles
 	attributes.user.locaiton == "US"
 }
