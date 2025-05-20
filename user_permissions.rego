@@ -6,20 +6,10 @@ import data.permit.abac_user_permissions
 
 import future.keywords.in
 
-import data.permit.rebac
-
 
 user := sprintf("user:%s", [input.user.key])
 
-default use_factdb := false
-use_factdb := input.context.use_factdb
-
-user_assignments := result {
-	use_factdb
-	result := input.context.data.role_assignments[user]
-} else := result {
-	result := data.role_assignments[user]
-}
+user_assignments := data.role_assignments[user]
 
 __input_tenants := object.get(input, "tenants", null)
 
@@ -172,12 +162,7 @@ default __rebac_roles := {}
 
 
 
-__rebac_roles := result {
-  use_factdb
-  result := permit_rebac.inline_all_roles(rebac._rebac_data, input)
-} else := result {
-  result := permit_rebac.all_roles(input)
-}
+__rebac_roles := permit_rebac.all_roles(input)
 
 
 
@@ -206,14 +191,6 @@ get_tenant(key) := result {
 }
 
 else = result {
-	use_factdb
-	# if key belong to abac_permissions and the result based on resource instance
-    input.context.data.resource_instances[key].tenant != null
-    tenant_key := input.context.data.resource_instances[key].tenant
-    result := object.union(data.tenants[tenant_key], {"key": input.context.data.resource_instances[key].tenant, "type": "__tenant"})
-}
-else = result {
-	not use_factdb
 	# if key belong to abac_permissions and the result based on resource instance
 	data.resource_instances[key].tenant != null
     result := object.union(data.tenants[data.resource_instances[key].tenant], {"key": data.resource_instances[key].tenant, "type": "__tenant"})
@@ -349,22 +326,6 @@ __rbac_permissions[assigned_object] := build_permissions_object(
 }
 
 
-instance_obj(resource_instance) := obj {
-	use_factdb
-	obj := input.context.data.resource_instances[resource_instance]
-} else := obj {
-	not use_factdb
-	obj := data.resource_instances[resource_instance]
-} else := {}
-
-do_filter(resource_details) {
-  use_factdb
-} else {
-  is_filtered_resource(resource_details)
-  _is_filtered_tenant(resource_details)
-}
-
-
 _rebac_permissions[resource] := build_permissions_object(
 	"resource",
 	resource_details.resource_type,
@@ -375,16 +336,17 @@ _rebac_permissions[resource] := build_permissions_object(
 ) {
 	rebac_all_roles := __rebac_roles
 	some resource, roles in rebac_all_roles
-	resource_obj := instance_obj(resource)
+	resource_obj := object.get(data.resource_instances, resource, {})
 	resource_details := split_resource_to_parts(resource)
 	updated_resource_details := object.union(resource_details,
 	{"tenant": object.get(resource_obj,"tenant","")})
-	do_filter(updated_resource_details)
+	is_filtered_resource(updated_resource_details)
+	_is_filtered_tenant(updated_resource_details)
 	stripped_roles := [stripped_role |
 		role := roles[_]
 		stripped_role := split_resource_role_to_parts(role).role
 	]
-	permissions := roles_permissions(stripped_roles, updated_resource_details)
+	permissions := roles_permissions(stripped_roles, resource_details)
 }
 
 

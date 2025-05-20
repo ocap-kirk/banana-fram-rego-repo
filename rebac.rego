@@ -10,38 +10,15 @@ default rebac_roles := []
 
 default cache_rebuild := false
 
-
-_rebac_data := result {
-  use_factdb
-  result := {
-    "role_assignments": input.context.data.role_assignments,
-    "relationships": input.context.data.relationships,
-    "resource_types": data.resource_types,
-  }
-} else := result {
-  result := {
-    "role_assignments": data.role_assignments,
-    "relationships": data.relationships,
-    "resource_types": data.resource_types,
-  }
-}
-
 cache_rebuild {
-  not use_factdb
-	permit_rebac.update_cache(_rebac_data)
-}
-
-rebac_roles_result := result {
-  use_factdb
-  _rebac_input := {
-    "user": input.user,
-    "action": input.action,
-    "resource": input.resource,
+  __rebac_data = {
+      "role_assignments": data.role_assignments,
+      "relationships": data.relationships,
+      "resource_types": data.resource_types,
   }
-  result := permit_rebac_roles(_rebac_data, _rebac_input)
-} else := result {
-  result := permit_rebac.roles(input)
+	permit_rebac.update_cache(__rebac_data)
 }
+rebac_roles_result := permit_rebac.roles(input)
 
 
 rebac_roles := rebac_roles_result.roles
@@ -71,18 +48,16 @@ scoped_users_obj := result {
 default allow := false
 
 allow {
-	rbac.allow with rbac.user_roles as rebac_roles
+	rbac.allow with data.users as scoped_users_obj
 		with data.roles_resource as input.resource.type
 }
 
 grants[grant] {
-	rbac.grants[grant] with rbac.user_roles as rebac_roles
-	  with data.roles_resource as input.resource.type
+	rbac.grants[grant] with data.users as scoped_users_obj with data.roles_resource as input.resource.type
 }
 
 allowing_roles[role_key] {
-	rbac.allowing_roles[role_key] with rbac.user_roles as rebac_roles
-	  with data.roles_resource as input.resource.type
+	rbac.allowing_roles[role_key] with data.users as scoped_users_obj with data.roles_resource as input.resource.type
 }
 
 object_keys(obj) := result {
@@ -92,10 +67,6 @@ object_keys(obj) := result {
 default activated := false
 
 activated {
-  use_factdb
-	some key, value in input.context.data.relationships
-	true
-} else {
 	some key, value in data.relationships
 	true
 }

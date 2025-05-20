@@ -3,13 +3,8 @@ package permit.authorized_users
 import data.permit.root.debugger_activated
 import data.permit.abac_authorized_users
 
-import data.permit.rebac._rebac_data
-
 import future.keywords.in
 
-
-default use_factdb := false
-use_factdb := input.context.use_factdb
 
 
 _abac_authorized_users[u]:= roles {
@@ -36,12 +31,7 @@ format_rebac_assignment(user, root_grant) := {
 default linked_users := {}
 
 
-linked_users := result {
-  use_factdb
-  result := permit_rebac.inline_linked_users(_rebac_data, input.resource)
-} else := result {
-  result := permit_rebac.linked_users(input.resource)
-}
+linked_users := permit_rebac.linked_users(input.resource)
 
 
 
@@ -56,21 +46,6 @@ allowing_action_roles_map[resource_type] := result {
 }
 
 authorized_rbac_users[user] := roles {
-	use_factdb
-	some _user , user_assignments in input.context.data.role_assignments
-	tenant_assignments := user_assignments[sprintf("__tenant:%s", [input.resource.tenant])]
-	user := trim_prefix(_user, "user:")
-	roles := {
-	formatted_assignment |
-		role := tenant_assignments[_]
-		input.action in allowing_action_roles_map.__tenant[role][input.resource.type]
-		formatted_assignment := format_rbac_assignment(user, role)
-	}
-	count(roles) > 0
-}
-
-authorized_rbac_users[user] := roles {
-	not use_factdb
 	some _user , user_assignments in data.role_assignments
 	tenant_assignments := user_assignments[sprintf("__tenant:%s", [input.resource.tenant])]
 	user := trim_prefix(_user, "user:")

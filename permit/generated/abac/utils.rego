@@ -2,10 +2,6 @@ package permit.generated.abac.utils
 
 import future.keywords.in
 
-import data.permit.rbac.tenant_identifier
-import data.permit.rbac.user_identifier
-import data.permit.rbac.user_roles
-
 default use_factdb := false
 
 use_factdb := input.context.use_factdb
@@ -34,15 +30,11 @@ object_keys(obj) := result {
 	result := [key | some key, value in obj]
 }
 
-user_tenants[tenant] {
-	use_factdb
-	some resource, _ in input.context.data.role_assignments[user_identifier]
-	startswith(resource, "__tenant:")
-	tenant := trim_prefix(resource, "__tenant:")
+user_roles[roleKey] {
+	some roleKey in data.users[input.user.key].roleAssignments[input.resource.tenant]
 }
 
 user_tenants[tenant] {
-	not use_factdb
 	some tenant in object_keys(data.users[input.user.key].roleAssignments)
 }
 
@@ -61,21 +53,11 @@ __user_in_tenant {
 
 default __stored_user_attributes = {}
 
-__stored_user_attributes := result {
-	use_factdb
-	result := input.context.data.users[input.user.key].attributes
-} else := result {
-	result := data.users[input.user.key].attributes
-}
+__stored_user_attributes = data.users[input.user.key].attributes
 
 default __stored_resource_attributes = {}
 
-__stored_resource_attributes := result {
-	use_factdb
-	result := input.context.data.resource_instances[sprintf("%s:%s", [input.resource.type, input.resource.key])].attributes
-} else := result {
-	result := data.resource_instances[sprintf("%s:%s", [input.resource.type, input.resource.key])].attributes
-}
+__stored_resource_attributes = data.resource_instances[sprintf("%s:%s", [input.resource.type, input.resource.key])].attributes
 
 # Stored tenant attributes only work if the input user is a member
 default __stored_tenant_attributes = {}

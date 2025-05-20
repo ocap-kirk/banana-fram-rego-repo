@@ -3,14 +3,6 @@ package permit.rbac
 
 import future.keywords
 
-default use_factdb := false
-use_factdb := input.context.use_factdb
-
-default user_identifier := ""
-default tenant_identifier := ""
-user_identifier := sprintf("user:%s",[input.user.key])
-tenant_identifier := sprintf("__tenant:%s",[input.resource.tenant])
-
 # By default, deny requests.
 default allow := false
 
@@ -33,13 +25,7 @@ tenant := tenant_key {
 }
 
 user_roles[role_key] {
-  use_factdb
-	some role_key in input.context.data.role_assignments[user_identifier][tenant_identifier]
-}
-
-user_roles[role_key] {
-  not use_factdb
-  some role_key in data.users[input.user.key].roleAssignments[tenant]
+	some role_key in data.users[input.user.key].roleAssignments[tenant]
 }
 
 default roles_resource := "__tenant"
@@ -55,4 +41,3 @@ allowing_roles[role_key] {
 	some role_key in user_roles
 	input.action in data.role_permissions[roles_resource][role_key].grants[input.resource.type]
 }
-
