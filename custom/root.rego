@@ -66,13 +66,6 @@ debug_info := {
     "parent_farm_attrs": get_all_attributes("Farm", "ManzanoFarm")
 }
 
-# Print debug information to OPA log
-debug_print {
-    printf("Resource Parents:", get_parent_resources(input.resource.type, input.resource.key))
-    printf("Resource Attributes:", get_resource_attributes(input.resource.type, input.resource.key))
-    printf("All Attributes:", get_all_attributes(input.resource.type, input.resource.key))
-    printf("Debug Info:", debug_info)
-}
 
 # Map all inherited attributes to resource attributes
 custom_resource_attributes := get_all_attributes(input.resource.type, input.resource.key)
