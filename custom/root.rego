@@ -67,10 +67,12 @@ debug_info := {
 }
 
 # Print debug information to OPA log
-print("Resource Parents:", get_parent_resources(input.resource.type, input.resource.key))
-print("Resource Attributes:", get_resource_attributes(input.resource.type, input.resource.key))
-print("All Attributes:", get_all_attributes(input.resource.type, input.resource.key))
-print("Debug Info:", debug_info)
+debug_print {
+    print("Resource Parents:", get_parent_resources(input.resource.type, input.resource.key))
+    print("Resource Attributes:", get_resource_attributes(input.resource.type, input.resource.key))
+    print("All Attributes:", get_all_attributes(input.resource.type, input.resource.key))
+    print("Debug Info:", debug_info)
+}
 
 # Map all inherited attributes to resource attributes
 custom_resource_attributes := get_all_attributes(input.resource.type, input.resource.key)
