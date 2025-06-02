@@ -99,30 +99,13 @@ add_prefix(instance_data, instance) = result {
 }
 
 
-resource_instances[instance] := instance_data {
-  use_contextualized_instances
-  some instance, instance_data in input.context.data.resource_instances
-}
-
-resource_instances[instance] := instance_data {
-  not use_contextualized_instances
-  some instance, instance_data in data.resource_instances
-}
-
-get_role_assignments := result {
-    use_contextualized_role_assignments
-    result := input.context.data.role_assignments
-} else = result {
-    result := data.role_assignments
-}
-
 # Iterate over data.role_assigments and return set of all tenants that user related to in the format { "tenant_key" : true}
 tenants_match_to_user_roles(user_key) = {tenant: true |
-    role_assigment := get_role_assignments[sprintf("user:%s",[user_key])]
-    some key, _ in role_assigment
-        parts := split(key, ":")
-        parts[0] == "__tenant"
-        tenant := parts[1]
+    role_assigment := data.role_assignments[sprintf("user:%s",[user_key])]
+	some key, _ in role_assigment
+		parts := split(key, ":")
+    parts[0] == "__tenant"
+		tenant := parts[1]
 }
 
 permissions[ps] {

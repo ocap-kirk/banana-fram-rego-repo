@@ -7,11 +7,9 @@ import future.keywords.if
 import future.keywords.in
 
 
-default use_factdb := false
-use_factdb := input.context.use_factdb
 
 abac_authorized_users[user] := roles if {
-    some user, user_data in input.context.data.users
+    some user, user_data in data.users
 
     customize_input := {
         "action": input.action,
