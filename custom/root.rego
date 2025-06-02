@@ -68,10 +68,10 @@ debug_info := {
 
 # Print debug information to OPA log
 debug_print {
-    print("Resource Parents:", get_parent_resources(input.resource.type, input.resource.key))
-    print("Resource Attributes:", get_resource_attributes(input.resource.type, input.resource.key))
-    print("All Attributes:", get_all_attributes(input.resource.type, input.resource.key))
-    print("Debug Info:", debug_info)
+    printf("Resource Parents:", get_parent_resources(input.resource.type, input.resource.key))
+    printf("Resource Attributes:", get_resource_attributes(input.resource.type, input.resource.key))
+    printf("All Attributes:", get_all_attributes(input.resource.type, input.resource.key))
+    printf("Debug Info:", debug_info)
 }
 
 # Map all inherited attributes to resource attributes
