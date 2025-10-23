@@ -8,5 +8,6 @@ default resourceset_Black_5fBanana = false
 
 resourceset_Black_5fBanana {
 	attributes.resource.color == "black"
+	attributes.resource.location == attributes.user.location
 	attributes.resource.type == "Banana"
 }
