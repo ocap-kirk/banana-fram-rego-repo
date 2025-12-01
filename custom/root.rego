@@ -14,3 +14,16 @@ default allow := false
 #     # if my_custom_rule is true, EVEN IF policies.allow is false.
 #     my_custom_rule
 # }
+
+# MFA requirement - customize conditions as needed
+default mfa_required := false
+
+# Example: require MFA for delete actions
+# mfa_required {
+#     input.action == "delete"
+# }
+
+# Example: require MFA for sensitive resource types
+# mfa_required {
+#     input.resource.type == "FinancialRecord"
+# }

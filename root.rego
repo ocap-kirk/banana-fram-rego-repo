@@ -20,6 +20,8 @@ allow {
 
 allowing_sources := policies.__allow_sources
 
+mfa_required := custom.mfa_required
+
 default __data_use_debugger := true
 
 __data_use_debugger = data.use_debugger
