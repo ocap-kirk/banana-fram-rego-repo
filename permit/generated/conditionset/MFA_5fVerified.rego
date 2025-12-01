@@ -8,4 +8,5 @@ default userset_MFA_5fVerified = false
 
 userset_MFA_5fVerified {
 	attributes.user.mfa_verified == true
+	"Admin" in attributes.user.roles
 }
