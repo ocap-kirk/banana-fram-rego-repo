@@ -9,4 +9,5 @@ default userset_MFA_5fVerified_5fAdmin = false
 userset_MFA_5fVerified_5fAdmin {
 	"admin" in attributes.user.roles
 	attributes.user.mfa_verified == true
+	attributes.user.key == "greg"
 }
