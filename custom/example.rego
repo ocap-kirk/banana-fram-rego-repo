@@ -1284,7 +1284,7 @@ can_export_data if {
 # Check if user can bulk import
 can_bulk_import if {
 	can_import_data
-	input.import.size < input.user.import_limit
+	input["import"].size < input.user.import_limit
 }
 
 # Check if user can bulk export
