@@ -59,7 +59,7 @@ can_delete_user if {
 
 can_delete_user if {
 	input.user.role == "manager"
-	input.target_user.role not in ["admin", "manager"]
+	not input.target_user.role in ["admin", "manager"]
 }
 
 # Check if user can update other users
