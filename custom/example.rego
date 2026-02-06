@@ -459,7 +459,7 @@ can_remove_team_member if {
 
 can_remove_team_member if {
 	input.user.id in input.team.admin_ids
-	input.target_user.id not in input.team.admin_ids
+	not input.target_user.id in input.team.admin_ids
 }
 
 # ============================================================================
