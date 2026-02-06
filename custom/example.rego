@@ -192,7 +192,7 @@ can_create_project if {
 }
 
 can_create_project if {
-	input.user.permissions contains "create_project"
+	"create_project" in input.user.permissions
 }
 
 # Check if user can update project
@@ -410,7 +410,7 @@ can_create_team if {
 }
 
 can_create_team if {
-	input.user.permissions contains "create_team"
+	"create_team" in input.user.permissions
 }
 
 # Check if user can update team
@@ -718,7 +718,7 @@ can_access_audit_logs if {
 }
 
 can_access_audit_logs if {
-	input.user.permissions contains "view_audit_logs"
+	"view_audit_logs" in input.user.permissions
 }
 
 can_access_audit_logs if {
@@ -777,7 +777,7 @@ can_send_notification if {
 }
 
 can_send_notification if {
-	input.user.permissions contains "send_notifications"
+	"send_notifications" in input.user.permissions
 }
 
 # ============================================================================
@@ -839,7 +839,7 @@ can_create_webhook if {
 }
 
 can_create_webhook if {
-	input.user.permissions contains "manage_webhooks"
+	"manage_webhooks" in input.user.permissions
 }
 
 # Check if user can update webhook
@@ -889,7 +889,7 @@ can_create_integration if {
 }
 
 can_create_integration if {
-	input.user.permissions contains "manage_integrations"
+	"manage_integrations" in input.user.permissions
 }
 
 # Check if user can update integration
@@ -925,7 +925,7 @@ can_access_reports if {
 }
 
 can_access_reports if {
-	input.user.permissions contains "view_reports"
+	"view_reports" in input.user.permissions
 }
 
 can_access_reports if {
@@ -938,7 +938,7 @@ can_create_report if {
 }
 
 can_create_report if {
-	input.user.permissions contains "create_reports"
+	"create_reports" in input.user.permissions
 }
 
 # Check if user can export report
@@ -970,7 +970,7 @@ can_access_analytics if {
 }
 
 can_access_analytics if {
-	input.user.permissions contains "view_analytics"
+	"view_analytics" in input.user.permissions
 }
 
 # Check if user can view user analytics
@@ -1102,7 +1102,7 @@ can_create_tags if {
 }
 
 can_create_tags if {
-	input.user.permissions contains "manage_tags"
+	"manage_tags" in input.user.permissions
 }
 
 # Check if user can update tags
@@ -1147,7 +1147,7 @@ can_create_template if {
 }
 
 can_create_template if {
-	input.user.permissions contains "create_templates"
+	"create_templates" in input.user.permissions
 }
 
 # Check if user can update template
@@ -1197,7 +1197,7 @@ can_create_workflow if {
 }
 
 can_create_workflow if {
-	input.user.permissions contains "create_workflows"
+	"create_workflows" in input.user.permissions
 }
 
 # Check if user can update workflow
@@ -1224,7 +1224,7 @@ can_execute_workflow if {
 }
 
 can_execute_workflow if {
-	input.user.permissions contains "execute_workflows"
+	"execute_workflows" in input.user.permissions
 }
 
 # ============================================================================
@@ -1242,7 +1242,7 @@ can_create_custom_fields if {
 }
 
 can_create_custom_fields if {
-	input.user.permissions contains "manage_custom_fields"
+	"manage_custom_fields" in input.user.permissions
 }
 
 # Check if user can update custom fields
@@ -1269,7 +1269,7 @@ can_import_data if {
 }
 
 can_import_data if {
-	input.user.permissions contains "import_data"
+	"import_data" in input.user.permissions
 }
 
 # Check if user can export data
@@ -1278,7 +1278,7 @@ can_export_data if {
 }
 
 can_export_data if {
-	input.user.permissions contains "export_data"
+	"export_data" in input.user.permissions
 }
 
 # Check if user can bulk import
