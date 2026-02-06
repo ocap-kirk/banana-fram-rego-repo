@@ -1,4 +1,4 @@
-package permit.custom
+package permit.custom.example195
 
 import rego.v1
 
