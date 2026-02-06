@@ -1590,12 +1590,11 @@ effective_permissions contains permission if {
 
 # Get user's effective roles
 effective_roles contains role if {
-	input.user.role == role
+	role := input.user.role
 }
 
 effective_roles contains role if {
-	some r in input.user.roles
-	r == role
+	some role in input.user.roles
 }
 
 # Check if resource is archived
