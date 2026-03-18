@@ -2,7 +2,6 @@ package permit.user_permissions
 
 
 import data.permit.abac_user_permissions
-import data.permit.custom
 
 
 import future.keywords.in
@@ -189,10 +188,6 @@ get_tenant(key) := result {
 	# if key belong to rebac_permissions
     rebac_permissions[key].tenant != null
     result := rebac_permissions[key].tenant
-} else = result {
-	# if key belong to custom_permissions
-    custom_permissions[key].tenant != null
-    result := custom_permissions[key].tenant
 }
 
 else = result {
@@ -206,10 +201,6 @@ concat_three_arrays(arr_1,arr_2,arr_3) := result {
     result := array.concat(array.concat(arr_1, arr_2), arr_3)
 }
 
-concat_four_arrays(arr_1, arr_2, arr_3, arr_4) := result {
-    result := array.concat(array.concat(array.concat(arr_1, arr_2), arr_3), arr_4)
-}
-
 # get all the permissions from rbac_permissions, abac_permissions and rebac_permissions and union them but without to override their properties
 # but instead aggregate them (different from rego object.union and object.union_n)
 permissions[key] := result {
@@ -217,7 +208,6 @@ permissions[key] := result {
         rbac_permissions,
         rebac_permissions,
         abac_permissions,
-        custom_permissions,
     ]))
 
     some key in unique_keys
@@ -225,18 +215,16 @@ permissions[key] := result {
         permissions_rbac := agg_values(key,rbac_permissions, "permissions")
         permissions_abac := agg_values(key,abac_permissions, "permissions")
         permissions_rebac := agg_values(key,rebac_permissions, "permissions")
-        permissions_custom := agg_values(key,custom_permissions, "permissions")
 
 		# aggregate all the common roles of the key
         roles_rbac := agg_values(key,rbac_permissions, "roles")
         roles_abac := agg_values(key,abac_permissions, "roles")
         roles_rebac := agg_values(key,rebac_permissions, "roles")
-        roles_custom := agg_values(key,custom_permissions, "roles")
 
 		# generate result with the form {"key" :{ "permissions": aggregated_permissions, "roles": aggregated_roles}, "tenant": related_tenant}
          _result := {
-			"permissions": concat_four_arrays(permissions_rbac, permissions_abac, permissions_rebac, permissions_custom),
-			"roles": concat_four_arrays(roles_rbac, roles_abac, roles_rebac, roles_custom),
+			"permissions": concat_three_arrays(permissions_rbac, permissions_abac, permissions_rebac),
+			"roles": concat_three_arrays(roles_rbac, roles_abac, roles_rebac ),
 			"tenant": get_tenant(key)
 		}
 
@@ -252,8 +240,6 @@ get_resource(key) := result {
 	result := { "resource": rbac_permissions[key].resource}
 } else := result  {
 	result := { "resource": abac_permissions[key].resource}
-} else := result {
-	result := { "resource": custom_permissions[key].resource}
 } else := result {
 	result := {}
 }
@@ -297,10 +283,6 @@ agg_abac_permissions := {result |
 }
 
 abac_permissions := object.union_n([v | v := agg_abac_permissions[_]])
-
-default custom_permissions := {}
-
-custom_permissions := object.union_n([v | v := _custom_permissions[_]])
 
 
 _rbac_permissions[object_permissions] {
@@ -372,10 +354,6 @@ _rebac_permissions[resource] := build_permissions_object(
 _abac_permissions[p] {
     input.context.enable_abac_user_permissions
 	p := abac_user_permissions.permissions[_]
-}
-
-_custom_permissions[p] {
-	p := custom.custom_user_permissions[_]
 }
 
 
