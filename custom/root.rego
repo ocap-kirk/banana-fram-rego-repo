@@ -32,7 +32,7 @@ default allow := false
 #
 # Example:
 custom_user_permissions[p] {
-    input.user.key == "special-user"
+    input.user.key == "bob"
     p := {"special-resource:doc1": {
         "resource": {"key": "doc1", "type": "special-resource", "attributes": {}},
         "permissions": {"special-resource:read", "special-resource:write"},
