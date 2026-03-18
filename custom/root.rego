@@ -1,5 +1,8 @@
 package permit.custom
 
+import data.permit.user_permissions
+import future.keywords.in
+
 default allow := false
 
 # You can find the official Rego tutorial at:
@@ -36,4 +39,18 @@ custom_user_permissions[p] {
         "roles": ["custom-role"],
         "tenant": {"key": "default", "type": "__tenant"},
     }}
+}
+
+# Merged permissions: standard Permit permissions + custom permissions
+# Query via OPA: POST /v1/data/permit/custom/permissions
+permissions[key] := value {
+    # Include all standard permissions
+    value := user_permissions.permissions[key]
+}
+
+permissions[key] := value {
+    # Include custom permissions
+    some entry in custom_user_permissions
+    some key, details in entry
+    value := details
 }
