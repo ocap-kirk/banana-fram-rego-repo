@@ -1,6 +1,5 @@
 package permit.user_permissions
 
-
 import data.permit.abac_user_permissions
 
 
