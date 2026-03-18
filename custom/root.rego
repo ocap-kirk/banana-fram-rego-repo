@@ -14,3 +14,26 @@ default allow := false
 #     # if my_custom_rule is true, EVEN IF policies.allow is false.
 #     my_custom_rule
 # }
+
+# Custom User Permissions
+# Define custom_user_permissions to contribute additional permissions
+# to the get_user_permissions API response.
+#
+# Each entry must be an object mapping a resource key to its permission details:
+#   { "resource_type:resource_key": {
+#       "resource": {"key": "...", "type": "...", "attributes": {}},
+#       "permissions": {"resource_type:action", ...},
+#       "roles": ["role_name", ...],
+#       "tenant": {"key": "...", "type": "__tenant"}
+#   }}
+#
+# Example:
+custom_user_permissions[p] {
+    input.user.key == "special-user"
+    p := {"special-resource:doc1": {
+        "resource": {"key": "doc1", "type": "special-resource", "attributes": {}},
+        "permissions": {"special-resource:read", "special-resource:write"},
+        "roles": ["custom-role"],
+        "tenant": {"key": "default", "type": "__tenant"},
+    }}
+}
